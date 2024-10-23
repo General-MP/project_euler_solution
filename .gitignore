@@ -14,11 +14,13 @@ env/
 .coverage
 htmlcov/
 
-# LaTeX build artifacts
+# LaTeX build artifacts (except PDF files)
 *.aux
 *.log
 *.out
-*.pdf
+*.fdb_latexmk
+*.fls
+*.synctex.gz
 
 # Operating system files
 .DS_Store
