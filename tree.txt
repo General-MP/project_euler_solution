@@ -1,0 +1,22 @@
+project_euler/
+│
+├── problem_001_multiples_of_3_or_5/
+│   ├── solution_001_multiples_of_3_or_5_approach_1.py
+│   ├── solution_001_multiples_of_3_or_5_approach_2.py
+│   ├── notebook_001_multiples_of_3_or_5.ipynb
+│   ├── proof_001_multiples_of_3_or_5.tex
+│   ├── test_problem_001_multiples_of_3_or_5.py
+│   ├── property_test_problem_001_multiples_of_3_or_5.py
+│   └── data/
+│       ├── sample_input.txt
+│       └── expected_output.txt
+│
+├── README.md            # Project overview and instructions
+├── requirements.txt     # Dependencies
+├── .gitignore           # Ignore unnecessary files
+├── CHANGELOG.md         # Track changes across problems
+├── pyproject.toml       # Config for linting/formatting tools
+├── tree.txt             # Folder structure (auto-generated)
+└── .github/             # CI/CD workflows
+    └── workflows/
+        └── python-app.yml

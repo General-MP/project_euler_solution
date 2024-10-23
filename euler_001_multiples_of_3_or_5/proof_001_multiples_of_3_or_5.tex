@@ -1,0 +1,87 @@
+\documentclass{article}
+\usepackage{amsmath}
+
+\title{Mathematical Proof for Project Euler Problem 1: Multiples of 3 or 5}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Problem Statement}
+Find the sum of all natural numbers below 1000 that are divisible by 3 or 5.
+
+\section*{Mathematical Solution}
+
+\subsection*{Step 1: Identify All Relevant Numbers}
+A number \(n\) is included if it is a multiple of either 3 or 5.  
+To avoid double counting, we apply the principle of inclusion-exclusion.
+
+\subsection*{Step 2: Principle of Inclusion-Exclusion}
+Let:
+\[
+A = \{n \mid n < 1000, \, n \text{ is a multiple of } 3\}
+\]
+\[
+B = \{n \mid n < 1000, \, n \text{ is a multiple of } 5\}
+\]
+
+Using the inclusion-exclusion principle:
+\[
+\text{Sum}(A \cup B) = \text{Sum}(A) + \text{Sum}(B) - \text{Sum}(A \cap B)
+\]
+
+\subsection*{Step 3: Calculate Individual Sums}
+
+\textbf{Multiples of 3 below 1000:}
+\[
+(3, 6, 9, \ldots, 999)
+\]
+Number of terms:
+\[
+n = \frac{999 - 3}{3} + 1 = 333
+\]
+Sum:
+\[
+\text{Sum}(A) = \frac{333}{2} (3 + 999) = 166833
+\]
+
+\textbf{Multiples of 5 below 1000:}
+\[
+(5, 10, 15, \ldots, 995)
+\]
+Number of terms:
+\[
+n = \frac{995 - 5}{5} + 1 = 199
+\]
+Sum:
+\[
+\text{Sum}(B) = \frac{199}{2} (5 + 995) = 99500
+\]
+
+\textbf{Multiples of 15 below 1000:}
+\[
+(15, 30, 45, \ldots, 990)
+\]
+Number of terms:
+\[
+n = \frac{990 - 15}{15} + 1 = 66
+\]
+Sum:
+\[
+\text{Sum}(A \cap B) = \frac{66}{2} (15 + 990) = 33165
+\]
+
+\subsection*{Step 4: Apply Inclusion-Exclusion}
+\[
+\text{Sum}(A \cup B) = 166833 + 99500 - 33165 = 233168
+\]
+
+\section*{Conclusion}
+The sum of all natural numbers below 1000 that are multiples of 3 or 5 is:
+\[
+\boxed{233168}
+\]
+
+\end{document}
