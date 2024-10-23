@@ -1,0 +1,35 @@
+# Byte-compiled Python files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+env/
+.venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Test cache and coverage files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.pdf
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# IDE and editor settings
+.vscode/
+.idea/
+
+# GitHub workflow logs
+.github/workflows/.logs/
+
+# Data files (optional)
+data/*.txt
