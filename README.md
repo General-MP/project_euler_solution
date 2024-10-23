@@ -22,8 +22,6 @@ This project also follows **best practices in software development** by:
 This project is created by **Phonlakrit Tiraratn (MP)**,  
 a first-year student pursuing a **double major in Computer Science and Economics**.
 
-MP aims to solve **all 970 Project Euler problems** using multiple approaches, mathematical proofs, and rigorous software development practices.
-
 ---
 
 ## **Folder Structure**
