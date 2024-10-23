@@ -1,4 +1,4 @@
-from euler_001_multiples_of_3_or_5 import sum_of_multiples_below, calculate_sum_of_multiples
+from solution_001_multiples_of_3_or_5_approach_1 import sum_of_multiples_below, calculate_sum_of_multiples
 
 def test_sum_of_multiples_below() -> None:
     """Unit test for the sum_of_multiples_below function."""

@@ -1,5 +1,5 @@
 from hypothesis import given, strategies as st
-from euler_001_multiples_of_3_or_5 import sum_of_multiples_below, calculate_sum_of_multiples
+from solution_001_multiples_of_3_or_5_approach_1 import sum_of_multiples_below, calculate_sum_of_multiples
 
 @given(st.integers(min_value=1, max_value=10_000), st.integers(min_value=1, max_value=100))
 def test_sum_of_multiples_below_hypothesis(limit: int, divisor: int) -> None:
