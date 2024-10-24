@@ -27,7 +27,3 @@ MP embarked on the challenge to solve all 970 Project Euler problems, using mult
 
 - **LaTeX**: For creating formal mathematical proofs accompanying the solutions.  
   Website: [LaTeX](https://www.latex-project.org/)
-
-## Special Thanks
-- **The Open-Source Community**: For building and maintaining these amazing tools and libraries.
-- **Friends and Family**: For their continuous support throughout this journey.
