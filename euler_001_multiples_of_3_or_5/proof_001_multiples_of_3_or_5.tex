@@ -1,7 +1,8 @@
 \documentclass{article}
 \usepackage{amsmath}
+\usepackage{amssymb}  % Required for \mathbb{N}
 
-\title{Mathematical Proof for Project Euler Problem 1: Multiples of 3 or 5}
+\title{Mathematical Proof of Correctness for Sum of Multiples of 3 or 5 Using the Inclusion-Exclusion Principle}
 \author{}
 \date{}
 
@@ -10,78 +11,171 @@
 \maketitle
 
 \section*{Problem Statement}
-Find the sum of all natural numbers below 1000 that are divisible by 3 or 5.
 
-\section*{Mathematical Solution}
+Given a positive integer \( N \), find the sum of all natural numbers less than \( N \) that are multiples of 3 or 5.
 
-\subsection*{Step 1: Identify All Relevant Numbers}
-A number \(n\) is included if it is a multiple of either 3 or 5.  
-To avoid double counting, we apply the principle of inclusion-exclusion.
+\section*{Understanding the Inclusion-Exclusion Principle}
 
-\subsection*{Step 2: Principle of Inclusion-Exclusion}
-Let:
+The inclusion-exclusion principle is a fundamental concept in combinatorics used to calculate the size or sum of the union of overlapping sets. It corrects for overcounting elements that are common to multiple sets.
+
+\subsection*{General Formulation}
+
+For two finite sets \( A \) and \( B \):
+
 \[
-A = \{n \mid n < 1000, \, n \text{ is a multiple of } 3\}
-\]
-\[
-B = \{n \mid n < 1000, \, n \text{ is a multiple of } 5\}
+|A \cup B| = |A| + |B| - |A \cap B|
 \]
 
-Using the inclusion-exclusion principle:
+\begin{itemize}
+    \item \( |A| \): Number of elements in set \( A \).
+    \item \( |B| \): Number of elements in set \( B \).
+    \item \( |A \cap B| \): Number of elements common to both \( A \) and \( B \).
+\end{itemize}
+
+This formula ensures that elements counted in both \( A \) and \( B \) are not double-counted in \( A \cup B \).
+
+\subsection*{Application to Sums}
+
+When dealing with sums of elements in sets, the principle extends as:
+
 \[
-\text{Sum}(A \cup B) = \text{Sum}(A) + \text{Sum}(B) - \text{Sum}(A \cap B)
+\sum_{x \in A \cup B} x = \sum_{x \in A} x + \sum_{x \in B} x - \sum_{x \in A \cap B} x
 \]
 
-\subsection*{Step 3: Calculate Individual Sums}
+\subsection*{Why the Principle is Necessary}
 
-\textbf{Multiples of 3 below 1000:}
-\[
-(3, 6, 9, \ldots, 999)
-\]
-Number of terms:
-\[
-n = \frac{999 - 3}{3} + 1 = 333
-\]
-Sum:
-\[
-\text{Sum}(A) = \frac{333}{2} (3 + 999) = 166833
-\]
+If we simply add \( \sum_{x \in A} x \) and \( \sum_{x \in B} x \), any elements that are in both \( A \) and \( B \) (i.e., \( A \cap B \)) will be counted twice. The inclusion-exclusion principle corrects this by subtracting \( \sum_{x \in A \cap B} x \), ensuring each element is counted exactly once.
 
-\textbf{Multiples of 5 below 1000:}
+\subsection*{Aspect Utilized in This Context}
+
+In the context of our problem:
+
+\begin{itemize}
+    \item \( A \): Multiples of 3 less than \( N \).
+    \item \( B \): Multiples of 5 less than \( N \).
+    \item \( A \cap B \): Multiples of both 3 and 5 (i.e., multiples of 15) less than \( N \).
+\end{itemize}
+
+By applying the inclusion-exclusion principle to sums, we can accurately compute the total sum of multiples of 3 or 5 below \( N \) without double-counting the multiples of 15.
+
+\section*{Proof of Correctness}
+
+\subsection*{Definition of Sets}
+
+Define the sets as:
+
 \[
-(5, 10, 15, \ldots, 995)
-\]
-Number of terms:
-\[
-n = \frac{995 - 5}{5} + 1 = 199
-\]
-Sum:
-\[
-\text{Sum}(B) = \frac{199}{2} (5 + 995) = 99500
+A = \{ n \in \mathbb{N} \mid 1 \leq n < N,\; 3 \mid n \}
 \]
 
-\textbf{Multiples of 15 below 1000:}
 \[
-(15, 30, 45, \ldots, 990)
-\]
-Number of terms:
-\[
-n = \frac{990 - 15}{15} + 1 = 66
-\]
-Sum:
-\[
-\text{Sum}(A \cap B) = \frac{66}{2} (15 + 990) = 33165
+B = \{ n \in \mathbb{N} \mid 1 \leq n < N,\; 5 \mid n \}
 \]
 
-\subsection*{Step 4: Apply Inclusion-Exclusion}
 \[
-\text{Sum}(A \cup B) = 166833 + 99500 - 33165 = 233168
+A \cap B = \{ n \in \mathbb{N} \mid 1 \leq n < N,\; 15 \mid n \}
+\]
+
+\subsection*{Calculating the Sums}
+
+\textbf{Multiples of 3:}
+
+\begin{itemize}
+    \item Number of terms:
+\end{itemize}
+
+\[
+n_3 = \left\lfloor \frac{N - 1}{3} \right\rfloor
+\]
+
+\begin{itemize}
+    \item Sum:
+\end{itemize}
+
+\[
+S_3 = 3 \times \frac{n_3 (n_3 + 1)}{2}
+\]
+
+\textbf{Multiples of 5:}
+
+\begin{itemize}
+    \item Number of terms:
+\end{itemize}
+
+\[
+n_5 = \left\lfloor \frac{N - 1}{5} \right\rfloor
+\]
+
+\begin{itemize}
+    \item Sum:
+\end{itemize}
+
+\[
+S_5 = 5 \times \frac{n_5 (n_5 + 1)}{2}
+\]
+
+\textbf{Multiples of 15:}
+
+\begin{itemize}
+    \item Number of terms:
+\end{itemize}
+
+\[
+n_{15} = \left\lfloor \frac{N - 1}{15} \right\rfloor
+\]
+
+\begin{itemize}
+    \item Sum:
+\end{itemize}
+
+\[
+S_{15} = 15 \times \frac{n_{15} (n_{15} + 1)}{2}
+\]
+
+\subsection*{Applying the Inclusion-Exclusion Principle}
+
+Using the principle:
+
+\[
+S = S_3 + S_5 - S_{15}
+\]
+
+This equation ensures that the sum \( S \) includes all multiples of 3 or 5 below \( N \) exactly once.
+
+\subsection*{Explanation in Context}
+
+\begin{itemize}
+    \item \textbf{Overcounting Issue:} Multiples of 15 are included in both \( S_3 \) and \( S_5 \) because they are divisible by both 3 and 5.
+    \item \textbf{Correction:} Subtracting \( S_{15} \) removes the duplicated sums of the multiples of 15, correcting the overcounting.
+\end{itemize}
+
+\subsection*{Example with \( N = 1000 \)}
+
+\textbf{Calculations:}
+
+\begin{itemize}
+    \item \( n_3 = 333 \)
+    \item \( S_3 = 166833 \)
+    \item \( n_5 = 199 \)
+    \item \( S_5 = 99500 \)
+    \item \( n_{15} = 66 \)
+    \item \( S_{15} = 33165 \)
+\end{itemize}
+
+\textbf{Final Sum:}
+
+\[
+S = 166833 + 99500 - 33165 = 233168
 \]
 
 \section*{Conclusion}
-The sum of all natural numbers below 1000 that are multiples of 3 or 5 is:
+
+By applying the inclusion-exclusion principle, we have accurately calculated the sum of all natural numbers less than \( 1000 \) that are multiples of 3 or 5:
+
 \[
 \boxed{233168}
 \]
+
+This confirms the correctness of our function \texttt{calculate\_sum\_of\_multiples} \( (N = 1000) \).
 
 \end{document}

@@ -27,28 +27,30 @@ a first-year student pursuing a **double major in Computer Science and Economics
 ## **Folder Structure**
 
 ```
-project_euler/
+project_euler_solution/
 │
-├── problem_001_multiples_of_3_or_5/
-│   ├── solution_001_multiples_of_3_or_5_approach_1.py   # Brute force solution
-│   ├── solution_001_multiples_of_3_or_5_approach_2.py   # Optimized solution
-│   ├── notebook_001_multiples_of_3_or_5.ipynb           # Jupyter notebook
-│   ├── proof_001_multiples_of_3_or_5.tex                # LaTeX proof
-│   ├── test_problem_001_multiples_of_3_or_5.py          # Unit tests
-│   ├── property_test_problem_001_multiples_of_3_or_5.py # Property-based tests
-│   └── data/
-│       ├── sample_input.txt                             # Example input
-│       └── expected_output.txt                          # Expected output
+├── utils/
+│   ├── __init__.py
+│   └── performance_test.py
 │
-├── README.md            # Project overview and instructions
-├── CREDITS.md           # Acknowledgments and credits
-├── requirements.txt     # Dependencies for the project
-├── .gitignore           # Files and folders to ignore in Git
-├── CHANGELOG.md         # Track changes across problems
-├── pyproject.toml       # Linter and formatter configuration
-└── .github/             # CI/CD workflows
-    └── workflows/
-        └── python-app.yml  # GitHub Actions workflow for testing
+├── euler_{problem_number}_{problem_name}/
+│   ├── notebook_{problem_number}_{problem_name}.ipynb            # Jupyter notebook for exploration
+│   ├── proof_{problem_number}_{problem_name}.tex                 # LaTeX proof of the solution
+│   ├── proof_{problem_number}_{problem_name}.pdf                 # Compiled PDF of the LaTeX proof
+│   ├── solution_{problem_number}_{problem_name}_approach_1.py    # Mathematical (Analytical) Solution
+│   ├── solution_{problem_number}_{problem_name}_approach_2.py    # Idiomatic Python Solution
+│   ├── solution_{problem_number}_{problem_name}_approach_2.py    # Imperitive Python Solution
+│   ├── test_solution_{problem_number}_{problem_name}.py          # Unit tests
+│   ├── property_test_solution_{problem_number}_{problem_name}.py # Property-based tests
+│
+├── README.md                # Overview and instructions
+├── CREDITS.md               # Acknowledgments and credits
+├── requirements.txt         # List of dependencies
+├── .gitignore               # Files and directories to ignore in Git
+├── CHANGELOG.md             # Track project changes over time
+├── LICENSE                  # MIT License for the project
+└── tree.txt                 # Directory structure of the project
+
 ```
 
 ---
@@ -90,14 +92,6 @@ Validate the solution with property-based tests:
 
 ```bash
 pytest problem_001_multiples_of_3_or_5/property_test_problem_001_multiples_of_3_or_5.py
-```
-
-### **Run Python-TA Linting (Terminal Only)**
-
-To ensure code quality using Python-TA:
-
-```bash
-python_ta problem_001_multiples_of_3_or_5/solution_001_multiples_of_3_or_5_approach_1.py
 ```
 
 ---

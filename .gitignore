@@ -35,3 +35,6 @@ Thumbs.db
 
 # Data files (optional)
 data/*.txt
+
+# Developer notes
+DEV_NOTES.md

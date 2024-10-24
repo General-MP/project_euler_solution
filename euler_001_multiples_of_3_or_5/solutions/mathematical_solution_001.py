@@ -18,7 +18,15 @@ def sum_of_multiples_below(limit: int, divisor: int) -> int:
     >>> sum_of_multiples_below(10, 5)
     5  # (5)
     """
-    n = (limit - 1) // divisor  # Number of terms
+    # Calculate the number of terms (n) in the sequence of multiples.
+    # We subtract 1 from 'limit' because we are only interested in numbers below 'limit'.
+    # The '//' operator performs integer division to get the largest integer less than or equal to the quotient.
+    n = (limit - 1) // divisor
+
+    # Calculate the sum of the arithmetic sequence using the formula:
+    # sum = divisor * n * (n + 1) // 2
+    # This formula calculates the sum of the first 'n' multiples of 'divisor'.
+    # We use integer division '//' to ensure the result is an integer.
     return divisor * n * (n + 1) // 2  # Sum of arithmetic sequence
 
 
@@ -39,7 +47,9 @@ def calculate_sum_of_multiples(limit: int) -> int:
     """
     sum_3 = sum_of_multiples_below(limit, 3)
     sum_5 = sum_of_multiples_below(limit, 5)
-    sum_15 = sum_of_multiples_below(limit, 15)  # Avoid double-counting
+    # Apply the inclusion-exclusion principle:
+    # Avoid double-counting
+    sum_15 = sum_of_multiples_below(limit, 15)  
 
     return sum_3 + sum_5 - sum_15
 
