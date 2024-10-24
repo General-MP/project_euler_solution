@@ -1,7 +1,7 @@
 
 # Project Euler Solutions
 
-This repository contains solutions to the first 970 problems from [Project Euler](https://projecteuler.net/).  
+This repository contains solutions to the 903 problems from [Project Euler](https://projecteuler.net/).  
 Each problem includes multiple approaches, mathematical proofs, and tests to ensure correctness.
 
 ## Project Overview
