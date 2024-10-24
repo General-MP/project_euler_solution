@@ -1,99 +1,78 @@
-def arithmetic_sequence_solution(limit: int) -> int:
-    """Calculate the sum of all natural numbers below 'limit' divisible by 3 or 5.
+import time
+import memory_profiler
+from typing import Callable, Any, Dict, Tuple
+from rich.console import Console
+from rich.table import Table
 
-    This function uses the arithmetic sequence formula to calculate the result 
-    in constant time, avoiding loops or iteration.
 
-    Time Complexity:
-        - O(1): Constant time, as it uses arithmetic formulas.
-
-    Memory Complexity:
-        - O(1): Constant space usage, only a few variables are used.
+def measure_performance(func: Callable, *args: Any, **kwargs: Any) -> Tuple[float, float, Any]:
+    """Measure the execution time and memory usage of a given function.
 
     Args:
-        limit (int): The upper limit (exclusive).
+        func (Callable): The function to test.
+        *args: Positional arguments for the function.
+        **kwargs: Keyword arguments for the function.
 
     Returns:
-        int: The sum of all multiples of 3 or 5 below 'limit'.
-
-    >>> arithmetic_sequence_solution(10)
-    23  # (3 + 5 + 6 + 9)
+        Tuple[float, float, Any]: Execution time (in seconds), memory usage (in MiB), and the function result.
     """
-    n3 = (limit - 1) // 3
-    n5 = (limit - 1) // 5
-    n15 = (limit - 1) // 15
-    return 3 * n3 * (n3 + 1) // 2 + 5 * n5 * (n5 + 1) // 2 - 15 * n15 * (n15 + 1) // 2
+    mem_before = memory_profiler.memory_usage()[0]
+    start_time = time.time()
 
+    result = func(*args, **kwargs)
 
-def generator_expression_solution(limit: int) -> int:
-    """Calculate the sum of all natural numbers below 'limit' divisible by 3 or 5.
+    end_time = time.time()
+    mem_after = memory_profiler.memory_usage()[0]
 
-    This function uses a generator expression and the built-in sum() function 
-    to efficiently calculate the sum. The entire range is traversed once.
+    exec_time = end_time - start_time
+    mem_usage = mem_after - mem_before
 
-    Time Complexity:
-        - O(n): Linear time, as the function iterates over the range.
+    return exec_time, mem_usage, result
 
-    Memory Complexity:
-        - O(1): Constant space, as the generator expression is used 
-          (no intermediate list stored in memory).
+def display_performance_table(functions: Dict[str, Callable], *args: Any, **kwargs: Any) -> None:
+    """Display a performance table using the rich library.
 
     Args:
-        limit (int): The upper limit (exclusive).
-
-    Returns:
-        int: The sum of all multiples of 3 or 5 below 'limit'.
-
-    >>> generator_expression_solution(10)
-    23  # (3 + 5 + 6 + 9)
+        functions (Dict[str, Callable]): A dictionary of function names and their corresponding callables.
+        *args: Positional arguments to be passed to all tested functions.
+        **kwargs: Keyword arguments to be passed to all tested functions.
     """
-    return sum(x for x in range(limit) if x % 3 == 0 or x % 5 == 0)
+    console = Console()
+    table = Table(title="Function Performance Comparison")
 
+    # Add columns
+    table.add_column("Function", justify="left", style="cyan", no_wrap=True)
+    table.add_column("Execution Time (s)", justify="right", style="green")
+    table.add_column("Memory Usage (MiB)", justify="right", style="magenta")
 
-def loop_based_solution(limit: int) -> int:
-    """Calculate the sum of all natural numbers below 'limit' divisible by 3 or 5.
+    # Measure performance for each function
+    for func_name, func in functions.items():
+        exec_time, mem_usage, _ = measure_performance(func, *args, **kwargs)
+        table.add_row(
+            func_name,
+            f"{exec_time:.6f}",
+            f"{mem_usage:.4f}"
+        )
 
-    This function uses a for-loop to calculate the sum. It iterates over all 
-    numbers below the limit and checks if they are divisible by 3 or 5.
-
-    Time Complexity:
-        - O(n): Linear time, as the function iterates through the range.
-
-    Memory Complexity:
-        - O(1): Constant space, as only a few variables are used.
-
-    Args:
-        limit (int): The upper limit (exclusive).
-
-    Returns:
-        int: The sum of all multiples of 3 or 5 below 'limit'.
-
-    >>> loop_based_solution(10)
-    23  # (3 + 5 + 6 + 9)
-    """
-    total_sum = 0
-    for n in range(limit):
-        if n % 3 == 0 or n % 5 == 0:
-            total_sum += n
-    return total_sum
-
-
-def main() -> None:
-    """Main function to execute the program logic and display performance."""
-    LIMIT = 1000
-
-    # Call the arithmetic sequence solution
-    result = arithmetic_sequence_solution(LIMIT)
-    print(f"Arithmetic Sequence Solution: {result}")
-
-    # Call the generator expression solution
-    result = generator_expression_solution(LIMIT)
-    print(f"Generator Expression Solution: {result}")
-
-    # Call the loop-based solution
-    result = loop_based_solution(LIMIT)
-    print(f"Loop-Based Solution: {result}")
+    console.print(table)
 
 
 if __name__ == "__main__":
-    main()
+    # Example functions
+    SUM_UNTIL = 10
+    def loop_sum(SUM_UNTIL: int) -> int:
+        result = 0
+        for i in range(SUM_UNTIL + 1):
+            result += i
+        return result
+    
+    def generator_sum(SUM_UNTIL: int) -> int:
+        return sum(i for i in range(SUM_UNTIL))
+    # Define the functions to test
+    functions_to_test = {
+        "loop_sum": loop_sum,
+        "generator_sum": generator_sum
+    }
+
+    # Display the performance table
+    display_performance_table(functions_to_test, 1000)

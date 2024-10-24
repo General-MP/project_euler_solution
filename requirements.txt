@@ -1,3 +1,5 @@
 pytest==8.3.3
 hypothesis==6.112.0
 python-ta==1.9.0
+memory-profiler==0.61.0
+rich==13.6.0
