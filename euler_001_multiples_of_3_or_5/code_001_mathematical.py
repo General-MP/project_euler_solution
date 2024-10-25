@@ -1,5 +1,5 @@
 def sum_of_multiples_below(limit: int, divisor: int) -> int:
-    """Return the sum of all multiples of 'divisor' below 'limit'.
+    """Returns the sum of all natural numbers below 1000 divisible by 3 or 5
 
     Preconditions:
         - limit > 0

@@ -1,0 +1,119 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb}
+
+\title{A General Approach to Computing the Sum of Multiples of Integers Below a Given Upper Limit}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Overview and Problem Statement}
+Given a set of positive integers \( D = \{d_1, d_2, \ldots, d_k\} \), our objective is to compute the sum of all natural numbers less than a positive integer \( N \) that are divisible by at least one element of the set \( D \). 
+
+For example, if \( D = \{3, 5\} \) and \( N = 10 \), the numbers divisible by 3 or 5 are \( 3, 5, 6, 9 \). The sum of these numbers is \( 3 + 5 + 6 + 9 = 23 \).
+
+The challenge is to generalize this process for any set \( D \) of divisors and any upper limit \( N \), ensuring no overlaps are double-counted. To accomplish this, we apply the \textbf{Principle of Inclusion-Exclusion} (PIE).
+
+\section*{Notation and Definitions}
+\begin{itemize}
+    \item \( \mathbb{N} \): The set of natural numbers, defined as \( \mathbb{N} = \{1, 2, 3, \ldots\} \).
+    \item \( N \in \mathbb{N} \): The positive integer upper limit (exclusive), meaning we are only interested in numbers \( < N \).
+    \item \( D = \{d_1, d_2, \ldots, d_k\} \): A set of positive divisors, with each \( d_i \in \mathbb{N} \).
+    \item \( \text{Sum}(d_i, N) \): The sum of all positive integers less than \( N \) that are divisible by \( d_i \).
+    \item \( \text{lcm}(d_{i_1}, \ldots, d_{i_j}) \): The least common multiple of the given set of divisors.
+    \item \( \left\lfloor x \right\rfloor \): The floor function, which returns the greatest integer less than or equal to \( x \).
+\end{itemize}
+
+\textbf{Additional Notation:}
+\begin{itemize}
+    \item \( \sum_{1 \leq i < j \leq k} \): Summation over all distinct pairs \( (i, j) \) such that \( i < j \).
+    \item \( \sum_{1 \leq i < j < \ell \leq k} \): Summation over all distinct triplets \( (i, j, \ell) \) such that \( i < j < \ell \). This ensures that each combination of three distinct divisors is counted exactly once.
+\end{itemize}
+
+\section*{Theorem and Proof}
+\textbf{Theorem:}  
+The sum of all natural numbers less than \( N \) that are divisible by at least one of the integers in the set \( D = \{d_1, d_2, \ldots, d_k\} \) is given by:
+\[
+S(N, D) = \sum_{\emptyset \neq S \subseteq D} (-1)^{|S| + 1} \cdot \text{Sum}(\text{lcm}(S), N).
+\]
+This formula follows from the \textbf{Principle of Inclusion-Exclusion} (PIE), which ensures that elements divisible by multiple divisors are not over-counted.
+
+\subsection*{Step 1: Sum of Multiples of a Single Divisor}
+Let \( d \in \mathbb{N} \) be a divisor. The set of all natural numbers divisible by \( d \) and strictly less than \( N \) is given by:
+\[
+\{d, 2d, 3d, \ldots, m \cdot d\},
+\]
+where \( m \) is the largest positive integer such that \( m \cdot d < N \). Formally:
+\[
+m = \left\lfloor \frac{N - 1}{d} \right\rfloor.
+\]
+Thus, the numbers divisible by \( d \) below \( N \) form an \textbf{arithmetic progression} with the first term \( d \) and common difference \( d \). The general formula for the sum of the first \( m \) terms of an arithmetic progression with first term \( a \) and common difference \( d \) is:
+\[
+\text{Sum}(d, N) = d \cdot \frac{m (m + 1)}{2}.
+\]
+
+\subsection*{Step 2: Inclusion-Exclusion for Multiple Divisors}
+When we are dealing with multiple divisors, we need to ensure that numbers divisible by more than one divisor are not counted multiple times. For this, we use the \textbf{Principle of Inclusion-Exclusion (PIE)}.
+
+Let \( S \subseteq D \) be a non-empty subset of the divisors. The set of numbers divisible by all elements of \( S \) is precisely the set of numbers divisible by \( \text{lcm}(S) \). Therefore:
+\[
+\text{Sum}(\text{lcm}(S), N) = \text{Sum}\left(\text{lcm}(d_{i_1}, \ldots, d_{i_j}), N\right),
+\]
+where \( j = |S| \) is the size of the subset.
+
+\[
+S(N, D) =
+\sum_{i=1}^{k} \text{Sum}(d_i, N)
+\]
+
+\[
+- \sum_{1 \leq i < j \leq k} \text{Sum}(\text{lcm}(d_i, d_j), N)
+\]
+
+\[
++ \sum_{1 \leq i < j < \ell \leq k} \text{Sum}(\text{lcm}(d_i, d_j, d_\ell), N) 
+\]
+
+\[
+- \cdots
+\]
+
+In general:
+\[
+S(N, D) = \sum_{\emptyset \neq S \subseteq D} (-1)^{|S| + 1} \cdot \text{Sum}(\text{lcm}(S), N).
+\]
+
+\subsection*{Explanation of Summation Notation}
+\[
+\textbf{Summation} \quad \sum_{1 \leq i < j \leq k}: \quad \text{This summation counts over all pairs} \quad (i, j) \quad \text{such that} \quad i < j. 
+\]
+This ensures that each distinct pair is considered only once.
+
+\[
+\textbf{Summation} \quad \sum_{1 \leq i < j < \ell \leq k}: \quad \text{This summation counts over all distinct triplets} \quad (i, j, \ell) \quad \text{such that} \quad i < j < \ell.
+\]
+This ensures that each unique triplet of divisors is included exactly once in the computation.
+
+\subsection*{Step 3: Example with \( D = \{3, 5\} \) and \( N = 1000 \)}
+Let \( D = \{3, 5\} \) and \( N = 1000 \). We compute:
+\[
+\text{Sum}(3, 1000) = 3 \cdot \frac{333 \cdot 334}{2} = 166833,
+\]
+\[
+\text{Sum}(5, 1000) = 5 \cdot \frac{199 \cdot 200}{2} = 99500,
+\]
+\[
+\text{Sum}(15, 1000) = 15 \cdot \frac{66 \cdot 67}{2} = 33165.
+\]
+
+Applying PIE:
+\[
+S(1000, \{3, 5\}) = 166833 + 99500 - 33165 = 233168.
+\]
+
+\section*{Conclusion}
+The general formula for the sum of multiples of any combination of positive integers below a given upper limit has been rigorously derived using the principle of inclusion-exclusion. The use of ordered summations ensures correct counting of intersections without redundancy, and the methodology can be applied to any set of divisors \( D \) and any upper limit \( N \).
+
+\end{document}

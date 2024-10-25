@@ -1,5 +1,5 @@
-def sum_of_multiples_of_3_or_5_below(limit: int) -> int:
-    """Calculate the sum of all natural numbers below 'limit' divisible by 3 or 5.
+def multiples_of_3_or_5(limit: int, divisors: int) -> int:
+    """Returns the sum of all natural numbers below 1000 divisible by 3 or 5
 
     This function uses a generator expression and the built-in sum() function 
     to efficiently calculate the sum. The entire range is traversed once.
@@ -20,7 +20,7 @@ def sum_of_multiples_of_3_or_5_below(limit: int) -> int:
     >>> generator_expression_solution(10)
     23  # (3 + 5 + 6 + 9)
     """
-    return sum(x for x in range(limit) if x % 3 == 0 or x % 5 == 0)
+    return sum(n for n in range(limit) if all(n % divisor == 0 for divisor in divisors))
 
 def main() -> None:
     """Main function to execute the program logic."""
