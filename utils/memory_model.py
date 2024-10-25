@@ -1,13 +1,15 @@
+from rich.console import Console
+from rich.table import Table
 import tracemalloc
 import gc
 import inspect
 import copy
 import sys
-from termcolor import colored
 
 class MemoryModelVisualizer:
     def __init__(self):
         self.previous_objects = {}
+        self.console = Console()
         tracemalloc.start()
 
     def trace_calls(self, frame, event, arg):
@@ -18,40 +20,48 @@ class MemoryModelVisualizer:
         lineno = frame.f_lineno
         filename = co.co_filename
         line = open(filename).readlines()[lineno - 1].strip()
-        print(f"\nExecuting Line {lineno}: {line}")
+        self.console.print(f"\n[cyan]Executing Line {lineno}:[/cyan] {line}")
         return self.trace_calls
 
     def capture_memory_state(self, step_label):
         """Capture and compare memory state, logging changes."""
         sys.settrace(self.trace_calls)  # Start tracing function calls
         current_objects = self._get_objects()
-        added, removed, modified = self._compare_states(self.previous_objects, current_objects)
+        added, removed, modified, inactive = self._compare_states(self.previous_objects, current_objects)
 
-        # Log changes or display if no change occurred
-        if added or removed or modified:
-            print(f"\n[Change Log Before Step: {step_label}]")
-            self._log_changes(added, removed, modified)
+        if added or removed or modified or inactive:
+            self.console.print(f"\n[bold magenta]Change Log Before Step: {step_label}[/bold magenta]")
+            self._log_changes(added, removed, modified, inactive)
         else:
-            print(f"\n[No Changes Detected at Step: {step_label}]")
-            self._display_unchanged_objects(current_objects)
+            self.console.print(f"\n[bold green]No Changes Detected at Step: {step_label}[/bold green]")
 
-        print(f"\n[Memory Model: {step_label}]")
+        self.console.print(f"\n[bold yellow]Memory Model: {step_label}[/bold yellow]")
         self._display_memory_model(current_objects)
 
         self.previous_objects = copy.deepcopy(current_objects)  # Update for next step
         sys.settrace(None)  # Stop tracing
 
     def _get_objects(self):
-        """Retrieve all objects in memory with details."""
+        """Retrieve all objects in memory with their scope."""
         gc.collect()
         objects = {}
         frame = inspect.currentframe().f_back
 
+        # Check local variables in the current frame
         for var_name, var_value in frame.f_locals.items():
+            scope = "local"
+            if var_name in frame.f_globals:
+                scope = "global"
             obj_id = id(var_value)
             obj_type = type(var_value).__name__
             obj_value = self._get_object_value(var_value)
-            objects[obj_id] = {"name": var_name, "type": obj_type, "value": obj_value, "ref": var_value}
+            objects[obj_id] = {
+                "name": var_name,
+                "type": obj_type,
+                "value": obj_value,
+                "scope": scope,
+                "ref": var_value,
+            }
         return objects
 
     def _get_object_value(self, obj):
@@ -64,7 +74,7 @@ class MemoryModelVisualizer:
             return repr(obj)[:50]
 
     def _compare_states(self, old, new):
-        """Detect added, removed, and modified objects."""
+        """Detect added, removed, modified, and inactive objects."""
         added = {k: new[k] for k in new if k not in old}
         removed = {k: old[k] for k in old if k not in new}
         modified = {
@@ -72,7 +82,8 @@ class MemoryModelVisualizer:
             for k in new
             if k in old and self._is_modified(old[k]["ref"], new[k]["ref"])
         }
-        return added, removed, modified
+        inactive = {k: old[k] for k in old if k not in new and old[k]["scope"] == "local"}
+        return added, removed, modified, inactive
 
     def _is_modified(self, old_obj, new_obj):
         """Detect if a mutable object was modified in-place."""
@@ -80,78 +91,84 @@ class MemoryModelVisualizer:
             return old_obj != new_obj
         return id(old_obj) != id(new_obj)
 
-    def _log_changes(self, added, removed, modified):
-        """Log added, removed, and modified objects."""
-        frame = inspect.currentframe().f_back
-        line_number = frame.f_lineno
-        source_line = inspect.getframeinfo(frame).code_context[0].strip()
-        highlighted_line = self._highlight_expression(source_line, added, removed, modified)
-
-        print(f"\nLine {line_number}: {highlighted_line}")
-
+    def _log_changes(self, added, removed, modified, inactive):
+        """Log changes in variables."""
         if added:
-            print("\n[Added Objects]")
-            for obj_id, obj in added.items():
-                print(f"{obj['name']} | {obj_id} | {obj['type']} | {obj['value']}")
+            self.console.print("\n[bold green]Added Objects:[/bold green]")
+            self._display_objects_table(added)
 
         if removed:
-            print("\n[Removed Objects]")
-            for obj_id, obj in removed.items():
-                print(f"{obj['name']} | {obj_id} | {obj['type']} | {obj['value']}")
+            self.console.print("\n[bold red]Removed Objects:[/bold red]")
+            self._display_objects_table(removed)
 
         if modified:
-            print("\n[Modified Objects]")
-            for obj_id, (old_obj, new_obj) in modified.items():
-                print(
-                    f"{new_obj['name']} | {obj_id} | {new_obj['type']} | "
-                    f"{colored('~~' + str(old_obj['value']) + '~~', 'red')} -> {new_obj['value']}"
-                )
+            self.console.print("\n[bold yellow]Modified Objects (Old vs New):[/bold yellow]")
+            self._display_modified_objects(modified)
 
-    def _highlight_expression(self, line, added, removed, modified):
-        """Highlight the part of the expression that caused the change."""
-        for obj in added.values():
-            line = line.replace(obj['name'], colored(f"{obj['name']}", "green"))
-        for obj in removed.values():
-            line = line.replace(obj['name'], colored(f"{obj['name']}", "red"))
-        for old_obj, new_obj in modified.items():
-            line = line.replace(new_obj[1]['name'], colored(f"{new_obj[1]['name']}", "yellow"))
-        return line
+        if inactive:
+            self.console.print("\n[bold blue]Inactive Objects (Out of Scope):[/bold blue]")
+            self._display_objects_table(inactive)
 
-    def _display_unchanged_objects(self, objects):
-        """Display unchanged objects for reference."""
-        print("\n[Unchanged Objects]")
-        for obj_id, obj in objects.items():
-            print(f"{obj['name']} | {obj_id} | {obj['type']} | {obj['value']}")
+    def _display_modified_objects(self, modified):
+        """Display modified objects with old and new values side by side."""
+        table = Table(show_header=True, header_style="bold yellow")
+        table.add_column("Object Name", style="cyan")
+        table.add_column("ID", style="yellow")
+        table.add_column("Type", style="green")
+        table.add_column("[Old]", style="red")
+        table.add_column("[New]", style="white")
+
+        for obj_id, (old_obj, new_obj) in modified.items():
+            table.add_row(
+                new_obj['name'], str(obj_id), new_obj['type'],
+                str(old_obj['value']), str(new_obj['value'])
+            )
+
+        self.console.print(table)
 
     def _display_memory_model(self, objects):
         """Display the complete memory model."""
-        print("\nObject Name | ID | Type | Value")
-        print("-" * 50)
+        self.console.print("\n[bold]Memory Model:[/bold]")
+        self._display_objects_table(objects)
+
+    def _display_objects_table(self, objects):
+        """Display objects in a table format."""
+        table = Table(show_header=True, header_style="bold magenta")
+        table.add_column("Object Name", style="cyan")
+        table.add_column("ID", style="yellow")
+        table.add_column("Type", style="green")
+        table.add_column("Scope", style="blue")
+        table.add_column("Value", style="white")
+
         for obj_id, obj in objects.items():
-            print(f"{obj['name']} | {obj_id} | {obj['type']} | {obj['value']}")
+            table.add_row(obj['name'], str(obj_id), obj['type'], obj['scope'], str(obj['value']))
 
-# Example usage with function calls
-def modify_list(lst):
-    lst.append("new item")  # Modify in-place
+        self.console.print(table)
 
-def reassign_variable(var):
-    var = "new value"  # Creates a new string object
+# Example usage
+def modify_global():
+    global my_list
+    my_list.append("new item")  # Modify global list
+
+def local_scope_function():
+    local_var = "I'm local"
+    print(local_var)  # Local variable will become inactive
 
 if __name__ == "__main__":
     visualizer = MemoryModelVisualizer()
 
     # Initial list of variables
-    print("\n[Initial List of Variables]")
+    my_list = [1, 2, 3]
+    my_str = "hello"
     visualizer.capture_memory_state("Initial")
 
-    # Modify list (in-place)
-    modify_list([1, 2, 3])
-    visualizer.capture_memory_state("After modifying list")
+    # Modify global list
+    modify_global()
+    visualizer.capture_memory_state("After modifying global list")
 
-    # Reassign string (new object)
-    reassign_variable("hello")
-    visualizer.capture_memory_state("After reassigning string")
+    # Call function with local scope
+    local_scope_function()
+    visualizer.capture_memory_state("After local scope function")
 
     # Final memory model
-    print("\n[Final Memory Model]")
     visualizer.capture_memory_state("Final")
